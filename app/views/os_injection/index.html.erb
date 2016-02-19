@@ -4,8 +4,9 @@
   examples = [
     {:endpoint => 'injectable', :label => 'Totally injectable', :input_name => 'Command'},
     {:endpoint => 'search_dir', :label => 'Search a directory', :input_name => 'Directory to search'},
+    {:endpoint => 'search_dir_relative', :label => 'Search a directory relative to root', :input_name => 'Directory to search'},
     {:endpoint => 'blind', :label => 'Blind injection', :input_name => 'Command'},
-    {:endpoint => 'blacklist', :label => 'Blacklisted metacharacters', :input_name => 'Directory to search'}
+    {:endpoint => 'blacklist', :label => 'Blacklisted metacharacters', :input_name => 'Directory to search'},
   ].map{ |ex| OpenStruct.new(ex) }
 %>
 
@@ -14,7 +15,7 @@
   <h1><%= example.label %></h1>
   <form class="simple-io" action="/os_injection/<%= example.endpoint %>" method="POST">
     <h3><%= example.input_name %></h3>
-    <input class="input" name="cmd"></input>
+    <textarea class="input" name="cmd"></textarea>
     <input type="submit" class="submit"></input>
     <button class="clear">Clear</button>
     <pre class="output"></pre>

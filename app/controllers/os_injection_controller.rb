@@ -12,6 +12,12 @@ class OsInjectionController < ApplicationController
     render :text => output
   end
 
+  def search_dir_relative
+    directory = Rails.root.join(params['cmd'])
+    output = `ls -l #{directory}`
+    render :text => output
+  end
+
 
   def blind
     success = system("which #{params['cmd']}")

@@ -1,0 +1,22 @@
+<h1>Cross-site Scripting</h1>
+
+<% 
+  examples = [
+    {:endpoint => 'raw', :label => 'No encoding', :input_name => 'text'},
+    {:endpoint => 'encoded', :label => 'HTML escaped', :input_name => 'text'},
+    {:endpoint => 'attrs', :label => 'HTML Attribute escaping', :input_name => 'text'},
+    {:endpoint => 'js_encoded', :label => 'JS escaping', :input_name => 'text'}
+  ].map{ |ex| OpenStruct.new(ex) }
+%>
+
+<% examples.each do |example| %>
+
+  <h1><%= example.label %></h1>
+  <form action="/xss/<%= example.endpoint %>" method="POST">
+    <%= csrf_token_tag %>
+    <h3><%= example.input_name %></h3>
+    <textarea class="input" name="cmd"></textarea>
+    <input type="submit" class="submit"></input>
+  </form>
+
+<% end %>

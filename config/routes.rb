@@ -1,9 +1,18 @@
 Rails.application.routes.draw do
-  get 'os_injection/index'
 
-  [:injectable, :search_dir, :blacklist, :blind].each do |route|
-    post "os_injection/#{route}"
-  end  
+  examples = {
+    :os_injection => [:injectable, :search_dir, :blacklist, :blind, :search_dir_relative],
+    :xss => [:raw, :encoded, :attrs, :js_encoded]
+  }
+
+  examples.each do |example, routes|
+    get example.to_s, :to => "#{example}#index"
+
+    routes.each do |route|
+      post "#{example}/#{route}"
+    end
+
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
