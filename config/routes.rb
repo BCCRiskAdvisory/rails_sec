@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  root :to => 'root#index'
+
   examples = {
     :os_injection => [:injectable, :search_dir, :blacklist, :blind, :search_dir_relative],
     :xss => [:raw, :encoded, :attrs, :js_encoded]
