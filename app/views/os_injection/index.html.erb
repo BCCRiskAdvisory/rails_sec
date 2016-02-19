@@ -14,6 +14,7 @@
 
   <h1><%= example.label %></h1>
   <form class="simple-io" action="/os_injection/<%= example.endpoint %>" method="POST">
+    <%= csrf_token_tag %>
     <h3><%= example.input_name %></h3>
     <textarea class="input" name="cmd"></textarea>
     <input type="submit" class="submit"></input>
