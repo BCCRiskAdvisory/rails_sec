@@ -1,0 +1,10 @@
+RAILS SPECIFIC
+
+dynamic views
+
+id[inline]=<%= 2 * 2 %>
+id%5Binline%5D%3D%3C%25%3D%202%20*%202%20%25%3E
+
+xss in json
+
+key=</script><script>alert(1);</script>

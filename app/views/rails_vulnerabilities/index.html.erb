@@ -1,0 +1,22 @@
+<h1>Dynamic views</h1>
+
+<%= form_tag('rails_vulnerabilities/render', :method => :post) do %>
+  <select name="view_name">
+    <option value="view_one">View #1</option>
+    <option value="view_two">View #2</option>
+  </select>
+  <input type="submit"></input>
+<% end %>
+
+<h1>XSS in JSON encoding</h1>
+<%= form_tag('rails_vulnerabilities/xss_in_json', :method => :post) do %>
+  <input name="key" placeholder="key"></input>
+  <input name="value" placeholder="value"></input>
+  <input type="submit"></input>
+<% end %>
+
+<h1>Denial of Service in Parameter Parsing</h1>
+<form class="simple-io" action="/something" method="POST">
+  <input name="thing"></input>
+  <input type="submit"></input>
+</form>

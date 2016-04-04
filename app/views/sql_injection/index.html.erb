@@ -1,0 +1,40 @@
+<%= render :partial => 'root/header' %>
+
+<h1>SQL injection</h1>
+
+<h2>User List</h2>
+<h3>Order by</h3>
+<form id="user-list-form">
+  <select name="column">
+    <% [:name, :email, :created_at, :points].each do |col| %>
+      <option value="<%= col %>"><%= col.to_s.titleize %></option>
+    <% end %>
+  </select>
+  Ascending <input type="radio" name="reverse" value="false" checked></input>
+  Descending <input type="radio" name="reverse" value="true"></input>
+  <button class="submit-form">Refresh</button>
+</form>
+
+<div id="user-list-output">
+</div>
+
+<h2>User Search</h2>
+
+<h3>Search by</h3>
+<form id="user-search-form">
+  <select name="column">
+    <% [:name, :email].each do |col| %>
+      <option value="<%= col %>"><%= col.to_s.titleize %></option>
+    <% end %>
+  </select>
+  <input name="value" placeholder="value"></input>
+  <button class="submit-form">Search</button>
+</form>
+
+<div id="user-search-output">
+
+</div>
+
+<div id="query-output">
+
+</div>

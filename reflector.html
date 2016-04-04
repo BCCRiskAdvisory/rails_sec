@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Reflector</title>    
+  </head>
+  <body>
+    <div id="results-box">
+
+    </div>
+    <script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>    
+    <script>
+      $(function() {
+        var resultsBox = $('#results-box')
+        function update() {
+          $.get('/update.json').success(function(resp) {
+            $.each(resp.payloads, function(index, el){
+              var newEl = $('<pre class="result"></pre>')
+              newEl.text(el)
+              resultsBox.prepend(newEl)
+            })
+          })
+        }
+        window.setInterval(update, 1000)
+      })
+    </script>
+  </body>
+</html>

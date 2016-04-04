@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_headers
 
   def set_headers
-    #response.headers['X-XSS-Protection'] = '0'
+    response.headers['X-XSS-Protection'] = '0'
   end
 
 end
