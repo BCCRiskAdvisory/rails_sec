@@ -1,0 +1,9 @@
+.bullet-reveal {
+  li {
+    opacity: 0.0;
+    transition: opacity 0.3s ease;
+  }
+  li.revealed {
+    opacity: 1.0;
+  }
+}

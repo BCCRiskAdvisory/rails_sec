@@ -23,6 +23,8 @@ Rails.application.routes.draw do
   match 'rails_vulnerabilities/render' => 'rails_vulnerabilities#render_view', :via => [:post, :get]
   post 'rails_vulnerabilities/xss_in_json' => 'rails_vulnerabilities#xss_in_json'
 
+  get 'intro/:tpl' => 'intro#index'
+
 
   # get 'rails_vulnerabilities/authenticated_page' => 'rails_vulnerabilities#authenticated_page'
 

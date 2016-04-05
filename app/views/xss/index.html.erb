@@ -1,6 +1,8 @@
+<%= render :partial => 'root/header' %>
+
 <h1>Cross-site Scripting</h1>
 
-<% 
+<%
   examples = [
     {:endpoint => 'raw', :label => 'No encoding', :input_name => 'text'},
     {:endpoint => 'encoded', :label => 'HTML escaped', :input_name => 'text'},
@@ -11,11 +13,12 @@
 
 <% examples.each do |example| %>
 
-  <h1><%= example.label %></h1>
+  <h3><%= example.label %></h3>
   <form action="/xss/<%= example.endpoint %>" method="POST">
     <%= csrf_token_tag %>
-    <h3><%= example.input_name %></h3>
-    <textarea class="input" name="cmd"></textarea>
+    <% id = SecureRandom.hex(8) %>
+    <label for="<%= id %>"><%= example.input_name %></label>
+    <textarea class="input" name="cmd" id="<%= id %>"></textarea>
     <input type="submit" class="submit"></input>
   </form>
 
