@@ -22,3 +22,24 @@
   height: 50px;
   background-color: #888;
 }
+
+#content {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  margin-left: 20px;
+  background-color: white;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+body {
+  background-color: #2A324B;
+}
+
+a.next-slide-link {
+  display: inline-block;
+  background-color: #C7CCDB;
+  color: white;
+  font-size: 20px;
+}

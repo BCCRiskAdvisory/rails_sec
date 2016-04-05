@@ -1,6 +1,7 @@
 require 'optparse'
 require 'socket'
 require 'json'
+require 'byebug'
 
 options = {:port => 3001}
 opt_parser = OptionParser.new do |opts|
@@ -23,6 +24,59 @@ JSON_MIME = 'application/json, charset=uft-8'
 PLAIN_MIME = 'text/plain, charset=uft-8'
 ICON_MIME = 'image/x-icon'
 
+class Request
+  attr_accessor :method, :uri, :raw, :http_version, :body
+
+  def initialize(top_line)
+    @raw = top_line
+    @finished = false
+    @headers_finished = false
+    @body = ""
+    @headers = {}
+    parts = top_line.split(" ")
+    @method = parts[0]
+    @uri = parts[1]
+    @http_version = parts[2]
+  end
+
+  def parse_line(line)
+    @raw += line
+    if line.strip.length == 0
+      @headers_finished = true
+      if !@content_length_header
+        @finished = true
+      end
+      return      
+    end
+    if @headers_finished
+      @body += line
+    else
+      parse_header(line)
+    end
+  end
+
+  def parse_header(line)
+    parts = line.split(": ")
+    @headers[parts[0]] = parts[1]
+    if parts[0].upcase == "CONTENT-LENGTH"
+      @content_length_header = true
+      @remaining_content = parts[1].to_i
+    end
+  end
+
+  def parse_body(line)
+    @body += line
+    @remaining_content -= line.length
+    if @remaining_content <= 0
+      @finished = true
+    end
+  end
+
+  def finished?
+    @finished
+  end
+end
+
 server = TCPServer.new options[:port]
 
 class ReflectorWorker
@@ -43,25 +97,21 @@ class ReflectorWorker
     (@payloads ||= []).push(val)
   end
 
-  def process(request)
+  def process(req)
     begin      
-      @request = request
-      puts "@request: #{@request}"
-      parse_request
-      puts "#{@method} #{@uri}"
-      if @method == 'GET' && ['/', '/index.html', '/index'].include?(@uri)
+      if req.method == 'GET' && ['/', '/index.html', '/index'].include?(req.uri)
         puts "rendering index"
         make_response(200, INDEX_HTML, HTML_MIME)
-      elsif @method == 'GET' && @uri == '/favicon.ico'
+      elsif req.method == 'GET' && req.uri == '/favicon.ico'
         puts "rendering favicon"
         make_response(200, FAVICON, ICON_MIME)
-      elsif @method == 'GET' && @uri == '/update.json'
+      elsif req.method == 'GET' && req.uri == '/update.json'
         puts "rendering update"
         resp = JSON.dump({:payloads => retrieve_payloads})      
         make_response(200, resp, JSON_MIME)
       else
         puts "rendering 204"
-        add_payload(request)
+        add_payload(req.raw)
         make_response(204)
       end
     rescue Exception => e
@@ -69,22 +119,6 @@ class ReflectorWorker
       body += "\n"
       body += e.backtrace.join("\n")
       make_response(500, body, PLAIN_MIME)
-    end
-  end
-
-  def parse_request    
-    lines = @request.lines.to_a
-    top_line = lines.shift
-    parts = top_line.split(" ")
-    @method = parts[0]
-    @uri = parts[1]
-    @http_version = parts[2]
-    @headers = {}
-    lines.each do |line|
-      parts = line.split(": ")
-      header_name = parts.shift
-      header_value = parts.join(": ")      
-      @headers[header_name] = header_value
     end
   end
 
@@ -105,21 +139,15 @@ end
 loop do
   Thread.start(server.accept) do |client|
     begin
-      req = ""
-      loop do
-        begin
-          data = client.recv_nonblock(32)        
-          if data.length == 0
-            break
-          else
-            req += data
-          end
-        rescue Errno::EAGAIN
-          break
-        rescue IO::WaitReadable
-          IO.select([client])        
-        end
-      end      
+      line = client.gets
+      puts line      
+      req = Request.new(line)
+      while (!req.finished?) do
+        line = client.gets
+        puts line
+        req.parse_line(line)
+      end
+      
       response = ReflectorWorker.new.process(req) 
       client.puts(response)
     rescue Exception => e
