@@ -18,7 +18,6 @@ class OsInjectionController < ApplicationController
     render :text => output
   end
 
-
   def blind
     success = system("which #{params['cmd']}")
     render :text => success ? "Command available" : "Command not available"

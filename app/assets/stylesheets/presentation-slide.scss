@@ -2,6 +2,13 @@
   li {
     opacity: 0.0;
     transition: opacity 0.3s ease;
+    color: #2A324B;
+    h1 {
+      font-size: 20px;
+    }
+    h2 {
+      font-size: 16px;
+    }
   }
   li.revealed {
     opacity: 1.0;

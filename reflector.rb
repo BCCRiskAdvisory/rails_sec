@@ -139,15 +139,12 @@ end
 loop do
   Thread.start(server.accept) do |client|
     begin
-      line = client.gets
-      puts line      
+      line = client.gets   
       req = Request.new(line)
       while (!req.finished?) do
         line = client.gets
-        puts line
         req.parse_line(line)
-      end
-      
+      end      
       response = ReflectorWorker.new.process(req) 
       client.puts(response)
     rescue Exception => e
