@@ -10,11 +10,8 @@ default: &default
   timeout: 5000
 
 development:
-  adapter: mysql2
-  username: rails_sec_user
-  password: Pa55word123!
-  database: rails_sec
-  host: localhost
+  <<: *default
+  database: db/development.sqlite3
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
