@@ -1,3 +1,7 @@
+# This code was an attempt to uncover a http basic auth password using a timing
+# attack. I couldn't get it to work, the time difference is too small to
+# measure with the current implementation.
+
 require 'net/http'
 require 'optparse'
 require 'securerandom'
@@ -19,7 +23,7 @@ opt_parser = OptionParser.new do |opts|
   opts.on('-i', '--iterations [ITERATIONS]', Integer, 'Number of iterations per candidate') do |i|
     options[:iterations] = i
   end
-  opts.on_tail('-h', '--help', 'Show this message') do 
+  opts.on_tail('-h', '--help', 'Show this message') do
     puts opts
     exit
   end
@@ -44,7 +48,7 @@ loop do
   workload = []
 
   candidates.each do |candidate|
-    times[candidate] = 0.0         
+    times[candidate] = 0.0
     ITERATIONS.times do
       workload.push({:candidate => candidate, :order => SecureRandom.random_number(ITERATIONS * ITERATIONS * candidates.length)})
     end

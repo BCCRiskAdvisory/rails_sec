@@ -1,3 +1,10 @@
+# This code allows you to run a simple http server that displays raw http
+# requests in the browser. Usage: ruby reflector.rb -p <PORT>. Browse to
+# http://localhost:<PORT>. The view should update automatically. Any further
+# requests sent to localhost:<PORT> that are not to the root or to update.json
+# will have their bodies reflected in your browser. POST bodies do not work yet.
+
+
 require 'optparse'
 require 'socket'
 require 'json'
@@ -9,7 +16,7 @@ opt_parser = OptionParser.new do |opts|
   opts.on('-p', '--port [PORT]', Integer, 'Set port') do |p|
     options[:port] = p
   end
-  opts.on_tail('-h', '--help', 'Show this message') do 
+  opts.on_tail('-h', '--help', 'Show this message') do
     puts opts
     exit
   end
@@ -46,7 +53,7 @@ class Request
       if !@content_length_header
         @finished = true
       end
-      return      
+      return
     end
     if @headers_finished
       @body += line
@@ -98,7 +105,7 @@ class ReflectorWorker
   end
 
   def process(req)
-    begin      
+    begin
       if req.method == 'GET' && ['/', '/index.html', '/index'].include?(req.uri)
         puts "rendering index"
         make_response(200, INDEX_HTML, HTML_MIME)
@@ -107,7 +114,7 @@ class ReflectorWorker
         make_response(200, FAVICON, ICON_MIME)
       elsif req.method == 'GET' && req.uri == '/update.json'
         puts "rendering update"
-        resp = JSON.dump({:payloads => retrieve_payloads})      
+        resp = JSON.dump({:payloads => retrieve_payloads})
         make_response(200, resp, JSON_MIME)
       else
         puts "rendering 204"
@@ -139,13 +146,13 @@ end
 loop do
   Thread.start(server.accept) do |client|
     begin
-      line = client.gets   
+      line = client.gets
       req = Request.new(line)
       while (!req.finished?) do
         line = client.gets
         req.parse_line(line)
-      end      
-      response = ReflectorWorker.new.process(req) 
+      end
+      response = ReflectorWorker.new.process(req)
       client.puts(response)
     rescue Exception => e
       puts e
@@ -155,4 +162,3 @@ loop do
     end
   end
 end
-
